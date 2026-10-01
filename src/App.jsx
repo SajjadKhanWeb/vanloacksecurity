@@ -4,6 +4,7 @@ import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
 import VanDetail from './pages/VanDetail.jsx'
 import ServiceDetail from './pages/ServiceDetail.jsx'
+import Fleets from './pages/Fleets.jsx'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/van/:slug" element={<VanDetail />} />
           <Route path="/services/:slug" element={<ServiceDetail />} />
+          <Route path="/fleets" element={<Fleets />} />
         </Routes>
       </div>
       <Footer />

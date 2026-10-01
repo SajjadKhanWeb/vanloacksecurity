@@ -100,7 +100,7 @@ export default function Header() {
             )}
           </div>
 
-          <button onClick={() => go('#fleets')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>Fleets</button>
+          <button onClick={() => go('/fleets')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>Fleets</button>
           <button onClick={() => go('#contact')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>Contact</button>
         </nav>
 
@@ -144,10 +144,10 @@ export default function Header() {
             </Link>
           ))}
 
-          <button onClick={() => go('#fleets')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0, marginTop: '1rem' }}>Fleets</button>
-          <button onClick={() => go('#contact')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0 }}>Contact</button>
+          <button onClick={() => { setOpen(false); go('/fleets'); }} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0, marginTop: '1rem' }}>Fleets</button>
+          <button onClick={() => { setOpen(false); go('#contact'); }} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0 }}>Contact</button>
 
-          <button className="btn btn-primary" onClick={() => go('#contact')} style={{ marginTop: '1rem' }}>
+          <button className="btn btn-primary" onClick={() => { setOpen(false); go('#contact'); }} style={{ marginTop: '1rem' }}>
             Get a Quote
           </button>
         </div>

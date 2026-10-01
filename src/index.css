@@ -2309,9 +2309,16 @@ textarea:focus-visible {
     grid-template-columns: 1fr;
   }
 
+  .hero {
+    background:
+      linear-gradient(180deg, rgba(8, 14, 22, 0.95) 0%, rgba(8, 14, 22, 0.8) 40%, rgba(8, 14, 22, 0.4) 100%),
+      url('/images/hero-bg.jpg') 85% center/cover;
+  }
+
   .hero-grid {
     max-height: none;
     min-height: auto;
+    padding: 60px 0 200px 0; /* Add bottom padding so the van shows underneath the text */
   }
 
   .split-reverse .split-copy,

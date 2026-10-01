@@ -1,39 +1,24 @@
+import { Routes, Route } from 'react-router-dom'
 import Header from './components/Header.jsx'
-import Hero from './components/Hero.jsx'
-import TrustBar from './components/TrustBar.jsx'
-import Services from './components/Services.jsx'
-import SecuritySolution from './components/SecuritySolution.jsx'
-import About from './components/About.jsx'
-import VehicleModels from './components/VehicleModels.jsx'
-import WhyChooseUs from './components/WhyChooseUs.jsx'
-import VideoShowcase from './components/VideoShowcase.jsx'
-import HowItWorks from './components/HowItWorks.jsx'
-import Testimonials from './components/Testimonials.jsx'
-import CTA from './components/CTA.jsx'
-import Contact from './components/Contact.jsx'
 import Footer from './components/Footer.jsx'
+import Home from './pages/Home.jsx'
+import VanDetail from './pages/VanDetail.jsx'
+import ServiceDetail from './pages/ServiceDetail.jsx'
 
 export default function App() {
   return (
     <>
-      <a className="skip-link" href="#home">
+      <a className="skip-link" href="#main-content">
         Skip to content
       </a>
       <Header />
-      <main>
-        <Hero />
-        <TrustBar />
-        <Services />
-        <SecuritySolution />
-        <About />
-        <VehicleModels />
-        <WhyChooseUs />
-        <VideoShowcase />
-        <HowItWorks />
-        <Testimonials />
-        <CTA />
-        <Contact />
-      </main>
+      <div id="main-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/van/:slug" element={<VanDetail />} />
+          <Route path="/services/:slug" element={<ServiceDetail />} />
+        </Routes>
+      </div>
       <Footer />
     </>
   )

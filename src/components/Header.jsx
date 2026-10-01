@@ -1,35 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { navLinks, site, vanModels, serviceGroups, popularVanIds } from '../data/site.js'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { navLinks, site, vanModels, popularVanIds, services } from '../data/site.js'
 import Logo from './Logo.jsx'
-import VanMegaMenu from './VanMegaMenu.jsx'
-import ServicesMegaMenu from './ServicesMegaMenu.jsx'
 import { Chevron, ArrowRight } from './MenuIcons.jsx'
-
-const accordionData = {
-  vans: {
-    title: 'Popular vans',
-    items: popularVanIds
-      .map((id) => vanModels.find((van) => van.id === id))
-      .filter(Boolean),
-    allLabel: 'All vans',
-    target: 'vehicles',
-  },
-  services: {
-    title: 'Service categories',
-    items: serviceGroups,
-    allLabel: 'All services',
-    target: 'services',
-  },
-}
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [openMenu, setOpenMenu] = useState(null)
-  const [openSection, setOpenSection] = useState(null)
-  const [openVan, setOpenVan] = useState(null)
-  const [active, setActive] = useState('home')
   const headerRef = useRef(null)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -38,59 +19,21 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => {
-    const sections = navLinks
-      .map((link) => document.getElementById(link.id))
-      .filter(Boolean)
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        if (visible?.target?.id) setActive(visible.target.id)
-      },
-      { rootMargin: '-35% 0px -50% 0px', threshold: [0.1, 0.25, 0.5] },
-    )
-
-    sections.forEach((section) => observer.observe(section))
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
-    document.body.style.overflow = open || openMenu ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [open, openMenu])
-
-  useEffect(() => {
-    if (!openMenu) return undefined
-
-    const onKey = (event) => {
-      if (event.key === 'Escape') setOpenMenu(null)
-    }
-    const onClick = (event) => {
-      if (headerRef.current && !headerRef.current.contains(event.target)) setOpenMenu(null)
-    }
-    const onScroll = () => setOpenMenu(null)
-
-    document.addEventListener('keydown', onKey)
-    document.addEventListener('click', onClick)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      document.removeEventListener('click', onClick)
-      window.removeEventListener('scroll', onScroll)
-    }
-  }, [openMenu])
-
-  const go = (id) => {
+  const go = (path) => {
     setOpen(false)
-    setOpenSection(null)
-    setOpenVan(null)
     setOpenMenu(null)
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    if (path.startsWith('#')) {
+      if (location.pathname !== '/') {
+        navigate('/')
+        setTimeout(() => {
+          document.querySelector(path)?.scrollIntoView({ behavior: 'smooth' })
+        }, 100)
+      } else {
+        document.querySelector(path)?.scrollIntoView({ behavior: 'smooth' })
+      }
+    } else {
+      navigate(path)
+    }
   }
 
   const toggleMenu = (key) => {
@@ -98,159 +41,107 @@ export default function Header() {
   }
 
   return (
-    <header className={`site-header${scrolled ? ' is-scrolled' : ''}`} ref={headerRef}>
-      <div className="container header-inner">
-        <a className="header-brand" href="#home" onClick={() => go('home')}>
+    <header className={`site-header${scrolled ? ' is-scrolled' : ''}`} ref={headerRef} style={{ position: 'fixed', top: 0, width: '100%', zIndex: 100, backgroundColor: scrolled ? '#000' : 'transparent', transition: '0.3s' }}>
+      <div className="container header-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 0' }}>
+        <Link className="header-brand" to="/" onClick={() => go('/')}>
           <Logo />
-        </a>
+        </Link>
 
-        <nav className="desktop-nav" aria-label="Primary">
-          {navLinks.map((link) =>
-            link.hasMegaMenu ? (
-              <div className="nav-dropdown" key={link.id}>
-                <button
-                  type="button"
-                  className={`nav-trigger${active === link.id ? ' is-active' : ''}${openMenu === link.hasMegaMenu ? ' is-open' : ''}`}
-                  aria-expanded={openMenu === link.hasMegaMenu}
-                  aria-haspopup="true"
-                  onClick={() => toggleMenu(link.hasMegaMenu)}
-                >
-                  <span>{link.label}</span>
-                  <Chevron />
-                </button>
+        <nav className="desktop-nav" aria-label="Primary" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+          <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
+          
+          <div className="nav-dropdown" style={{ position: 'relative' }} onMouseLeave={() => setOpenMenu(null)}>
+            <button
+              type="button"
+              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', fontFamily: 'inherit' }}
+              onMouseEnter={() => setOpenMenu('vans')}
+              onClick={() => toggleMenu('vans')}
+            >
+              <span>Choose Your Van</span>
+              <Chevron />
+            </button>
+            {openMenu === 'vans' && (
+              <div className="simple-dropdown" style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#111', padding: '1rem', borderRadius: '8px', minWidth: '220px', display: 'flex', flexDirection: 'column', gap: '0.5rem', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                {popularVanIds.map((id) => {
+                  const van = vanModels.find((v) => v.id === id)
+                  if (!van) return null
+                  return (
+                    <Link key={van.id} to={`/van/${van.id}`} onClick={() => setOpenMenu(null)} style={{ color: '#ccc', textDecoration: 'none', padding: '0.5rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#ccc'}>
+                      {van.name}
+                    </Link>
+                  )
+                })}
               </div>
-            ) : (
-              <a
-                key={link.id}
-                href={`#${link.id}`}
-                className={active === link.id ? 'is-active' : undefined}
-                aria-current={active === link.id ? 'true' : undefined}
-                onClick={(event) => {
-                  event.preventDefault()
-                  go(link.id)
-                }}
-              >
-                {link.label}
-              </a>
-            ),
-          )}
+            )}
+          </div>
+
+          <div className="nav-dropdown" style={{ position: 'relative' }} onMouseLeave={() => setOpenMenu(null)}>
+            <button
+              type="button"
+              style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', fontFamily: 'inherit' }}
+              onMouseEnter={() => setOpenMenu('services')}
+              onClick={() => toggleMenu('services')}
+            >
+              <span>Our Services</span>
+              <Chevron />
+            </button>
+            {openMenu === 'services' && (
+              <div className="simple-dropdown" style={{ position: 'absolute', top: '100%', left: 0, backgroundColor: '#111', padding: '1rem', borderRadius: '8px', minWidth: '220px', display: 'flex', flexDirection: 'column', gap: '0.5rem', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                {services.map((service) => (
+                  <Link key={service.id} to={`/services/${service.id}`} onClick={() => setOpenMenu(null)} style={{ color: '#ccc', textDecoration: 'none', padding: '0.5rem', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#ccc'}>
+                    {service.title}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button onClick={() => go('#contact')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>Contact</button>
         </nav>
 
-        <a className="btn btn-primary header-cta" href="#contact" onClick={(e) => { e.preventDefault(); go('contact') }}>
+        <button className="btn btn-primary header-cta" onClick={() => go('#contact')}>
           Get a Quote
-        </a>
+        </button>
 
         <button
           className={`menu-toggle${open ? ' is-open' : ''}`}
           type="button"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
           onClick={() => setOpen((value) => !value)}
         >
-          <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
+          <span className="sr-only">Menu</span>
           <span />
           <span />
           <span />
         </button>
       </div>
 
-      {openMenu && (
-        <div className="mega-wrap">
-          <div className="container">
-            {openMenu === 'vans' ? (
-              <VanMegaMenu onClose={() => setOpenMenu(null)} onNavigate={go} />
-            ) : (
-              <ServicesMegaMenu onClose={() => setOpenMenu(null)} onNavigate={go} />
-            )}
-          </div>
-        </div>
-      )}
+      {/* Mobile Menu */}
+      <div className={`mobile-menu${open ? ' is-open' : ''}`} id="mobile-menu" style={{ display: open ? 'block' : 'none', backgroundColor: '#000', padding: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <Link to="/" onClick={() => go('/')} style={{ color: '#fff', textDecoration: 'none', fontSize: '1.2rem' }}>Home</Link>
+          
+          <div style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 'bold' }}>Vans</div>
+          {popularVanIds.map((id) => {
+            const van = vanModels.find((v) => v.id === id)
+            if (!van) return null
+            return (
+              <Link key={van.id} to={`/van/${van.id}`} onClick={() => setOpen(false)} style={{ color: '#ccc', textDecoration: 'none', paddingLeft: '1rem' }}>
+                {van.name}
+              </Link>
+            )
+          })}
 
-      <div className={`mobile-menu${open ? ' is-open' : ''}`} id="mobile-menu">
-        <p className="mobile-kicker">{site.tagline}</p>
-        {navLinks.map((link) => {
-          const data = link.hasMegaMenu ? accordionData[link.hasMegaMenu] : null
-          const expanded = openSection === link.id
-          return (
-            <div className="mobile-item" key={link.id}>
-              {data ? (
-                <>
-                  <button
-                    type="button"
-                    className={`mobile-link${active === link.id ? ' is-active' : ''}${expanded ? ' is-open' : ''}`}
-                    aria-expanded={expanded}
-                    onClick={() => setOpenSection((current) => (current === link.id ? null : link.id))}
-                  >
-                    <span>{link.label}</span>
-                    <Chevron />
-                  </button>
-                  {expanded && (
-                    <div className="mobile-sub">
-                      <p className="mobile-sub-title">{data.title}</p>
-                      {data.items.map((item) =>
-                        item.options ? (
-                          <div className="mobile-sub-group" key={item.id ?? item.name}>
-                            <button
-                              type="button"
-                              className={`mobile-sub-link mobile-van-toggle${openVan === item.id ? ' is-open' : ''}`}
-                              aria-expanded={openVan === item.id}
-                              onClick={() => setOpenVan((current) => (current === item.id ? null : item.id))}
-                            >
-                              {item.name ?? item.title}
-                              <Chevron />
-                            </button>
-                            {openVan === item.id && (
-                              <ul className="mobile-van-options">
-                                {item.options.map((option) => (
-                                  <li key={option}>
-                                    <button type="button" onClick={() => go('contact')}>
-                                      {option}
-                                    </button>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        ) : (
-                          <button
-                            key={item.id ?? item.name}
-                            type="button"
-                            className="mobile-sub-link"
-                            onClick={() => go(link.id)}
-                          >
-                            {item.name ?? item.title}
-                            <ArrowRight />
-                          </button>
-                        ),
-                      )}
-                      <button
-                        type="button"
-                        className="btn btn-dark mobile-sub-all"
-                        onClick={() => go(data.target)}
-                      >
-                        {data.allLabel}
-                      </button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <a
-                  className={`mobile-link${active === link.id ? ' is-active' : ''}`}
-                  href={`#${link.id}`}
-                  onClick={(event) => {
-                    event.preventDefault()
-                    go(link.id)
-                  }}
-                >
-                  {link.label}
-                </a>
-              )}
-            </div>
-          )
-        })}
-        <a className="btn btn-primary" href="#contact" onClick={(e) => { e.preventDefault(); go('contact') }}>
-          Get a Quote
-        </a>
+          <div style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 'bold', marginTop: '1rem' }}>Services</div>
+          {services.map((service) => (
+            <Link key={service.id} to={`/services/${service.id}`} onClick={() => setOpen(false)} style={{ color: '#ccc', textDecoration: 'none', paddingLeft: '1rem' }}>
+              {service.title}
+            </Link>
+          ))}
+
+          <button className="btn btn-primary" onClick={() => go('#contact')} style={{ marginTop: '1rem' }}>
+            Get a Quote
+          </button>
+        </div>
       </div>
     </header>
   )

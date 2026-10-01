@@ -284,7 +284,9 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 30px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  gap: 24px;
 }
 
 .desktop-nav a {
@@ -298,6 +300,12 @@ textarea:focus-visible {
   color: #fff;
   transition: color 0.25s ease;
 }
+
+.desktop-nav button {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 
 .desktop-nav a:hover,
 .desktop-nav a:focus-visible,

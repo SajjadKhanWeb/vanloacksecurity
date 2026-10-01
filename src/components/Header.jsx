@@ -22,7 +22,10 @@ export default function Header() {
   const go = (path) => {
     setOpen(false)
     setOpenMenu(null)
-    if (path.startsWith('#')) {
+    if (path === '/') {
+      navigate('/')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else if (path.startsWith('#')) {
       if (location.pathname !== '/') {
         navigate('/')
         setTimeout(() => {
@@ -48,8 +51,9 @@ export default function Header() {
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
-          
+          <Link to="/" onClick={(e) => { e.preventDefault(); go('/'); }} style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
+          <button onClick={() => go('#about')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>About Us</button>
+
           <div className="nav-dropdown" style={{ position: 'relative' }} onMouseLeave={() => setOpenMenu(null)}>
             <button
               type="button"
@@ -96,6 +100,7 @@ export default function Header() {
             )}
           </div>
 
+          <button onClick={() => go('#fleets')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>Fleets</button>
           <button onClick={() => go('#contact')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit' }}>Contact</button>
         </nav>
 
@@ -118,7 +123,8 @@ export default function Header() {
       {/* Mobile Menu */}
       <div className={`mobile-menu${open ? ' is-open' : ''}`} id="mobile-menu" style={{ display: open ? 'block' : 'none', backgroundColor: '#000', padding: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <Link to="/" onClick={() => go('/')} style={{ color: '#fff', textDecoration: 'none', fontSize: '1.2rem' }}>Home</Link>
+          <button onClick={() => go('/')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0 }}>Home</button>
+          <button onClick={() => go('#about')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0 }}>About Us</button>
           
           <div style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 'bold' }}>Vans</div>
           {popularVanIds.map((id) => {
@@ -137,6 +143,9 @@ export default function Header() {
               {service.title}
             </Link>
           ))}
+
+          <button onClick={() => go('#fleets')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0, marginTop: '1rem' }}>Fleets</button>
+          <button onClick={() => go('#contact')} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0 }}>Contact</button>
 
           <button className="btn btn-primary" onClick={() => go('#contact')} style={{ marginTop: '1rem' }}>
             Get a Quote

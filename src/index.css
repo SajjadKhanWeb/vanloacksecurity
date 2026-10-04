@@ -1306,7 +1306,7 @@ textarea:focus-visible {
   align-items: center;
   min-height: calc(100svh - var(--header));
   max-height: 760px;
-  padding: 48px 0;
+  padding: calc(var(--header) + 48px) 0 48px;
 }
 
 .hero h1,
@@ -2343,7 +2343,7 @@ textarea:focus-visible {
   .hero-grid {
     max-height: none;
     min-height: auto;
-    padding: 60px 0 200px 0; /* Add bottom padding so the van shows underneath the text */
+    padding: calc(var(--header) + 40px) 0 200px 0; /* Add bottom padding so the van shows underneath the text */
   }
 
   .split-reverse .split-copy,

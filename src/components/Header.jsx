@@ -100,7 +100,7 @@ export default function Header() {
           <Logo />
         </Link>
 
-        <nav className="desktop-nav" aria-label="Primary" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        <nav className="desktop-nav" aria-label="Primary">
           <Link to="/" onClick={(e) => { e.preventDefault(); go('/'); }} style={{ color: getColor('home'), textDecoration: 'none', transition: 'color 0.3s' }}>Home</Link>
           <button onClick={() => go('#about')} style={{ background: 'none', border: 'none', color: getColor('about'), cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit', transition: 'color 0.3s' }}>About Us</button>
 
@@ -171,7 +171,7 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`mobile-menu${open ? ' is-open' : ''}`} id="mobile-menu" style={{ display: open ? 'block' : 'none', backgroundColor: '#000', padding: '1rem' }}>
+      <div className={`mobile-menu${open ? ' is-open' : ''}`} id="mobile-menu" style={{ backgroundColor: '#000', padding: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <button onClick={() => go('/')} style={{ background: 'none', border: 'none', color: getMobileColor('home'), cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0, transition: 'color 0.3s' }}>Home</button>
           <button onClick={() => go('#about')} style={{ background: 'none', border: 'none', color: getMobileColor('about'), cursor: 'pointer', fontSize: '1.2rem', textAlign: 'left', padding: 0, transition: 'color 0.3s' }}>About Us</button>
